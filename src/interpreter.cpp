@@ -159,7 +159,6 @@ bool interpreter::parse(void)
 				{
 					int ins = 0;
 					do{
-						//std::cout<<c<<" z"<<fckMemory[pointer]<<std::endl;
 						c = *iterator;
 						if(c == '[')ins++;
 						if(c == ']')ins--;
@@ -176,13 +175,12 @@ bool interpreter::parse(void)
 			{
 				int ins = 0;
 				do{
-					c = *iterator;
 					//std::cout<<"#"<<c<<"#"<<"p."<<fckMemory[pointer]<<".p"<<pointer<<"_";
-					//std::cout<<c<<" l"<<fckMemory[pointer]<<std::endl;
+					c = *iterator;
 					if(c == ']')ins++;
 					else if(c == '[')ins--;
-					else if(c == '>')pointer--;
-					else if(c == '<')pointer++;
+					//else if(c == '>')pointer--;
+					//else if(c == '<')pointer++;
 
 					if(c == '[' && ins == 0)
 					{
@@ -196,8 +194,6 @@ bool interpreter::parse(void)
 			{}
 
 		}		
-
-		//std::cout<<"#"<<c<<"#"<<"p."<<fckMemory[pointer]<<".p"<<pointer<<"_";
 	
 
 		if(pointer < 0 || pointer >= memSize)
@@ -209,7 +205,7 @@ bool interpreter::parse(void)
 
 	}
 
-	if(!isSilent())std::cout<<"\n###########\nExecution has been successful"<<std::endl;
+	if(isVerbose())std::cout<<"\n###########\nExecution has been successful"<<std::endl;
 
 	fs.close();
 	delete [] fckMemory;
