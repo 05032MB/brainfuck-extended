@@ -31,6 +31,8 @@ There will be no output form interpreter at all! Mutually exclusive with -v and 
 Specifies number of memory blocks to allocate. If not set will allocate 300.
 * -p[pos]
 Starting position of the program pointer. Default set to memory block number 0.
+* -l
+Use faster loops. Increases execution time for slightly more memory consumption.
 
 # planned
 1. Support for all types of [ExtendedBrainfuck](https://esolangs.org/wiki/Extended_Brainfuck)

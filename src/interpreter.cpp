@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <forward_list>
 #include <fstream>
 
 bool interpreter::isVerbose()const
@@ -21,6 +22,7 @@ interpreter::interpreter(const std::vector<std::string> &v)
 	fileToOpen = "";
 	memSize = 300;
 	pointer = 0;
+	fastLoops = false;
 
 	if(parseOpts() == false)
 	{
@@ -67,6 +69,11 @@ bool interpreter::parseOpts()
 			if(isVerbose()){
 				std::cout<<"Set memory to "<<memSize<<" blocks"<<std::endl;
 			}
+		}else if(optsym == "-l"){
+			fastLoops = true;
+			if(isVerbose()){
+				std::cout<<"Fast loops enabled. "<<std::endl;
+			}
 		}else if(optsym == "-p"){
 			pointer = std::stoi(i.substr(2));
 			if(isVerbose()){
@@ -112,7 +119,9 @@ bool interpreter::parse(void)
 	if(isVerbose())std::cout<<"bxx: executing: "<<fileToOpen<<std::endl<<"###########\n";
 
 	char c;
-	int nesting = 0;
+	//int nesting = 0;
+
+	std::forward_list<decltype(str.begin())> qNesting;
 
 	for(auto iterator = str.begin(), end = str.end(); iterator != end; ++iterator)
 	{
@@ -154,7 +163,12 @@ bool interpreter::parse(void)
 			}
 			case '[':
 			{
-				if(fckMemory[pointer] > 0)nesting++; //warunek spełniony
+				if(fckMemory[pointer] > 0)
+				{
+					qNesting.push_front(iterator-1);
+					//std::cout<<"s";
+
+				} //warunek spełniony
 				else //skip the loop
 				{
 					int ins = 0;
@@ -174,21 +188,27 @@ bool interpreter::parse(void)
 			case ']':
 			{
 				int ins = 0;
-				do{
-					//std::cout<<"#"<<c<<"#"<<"p."<<fckMemory[pointer]<<".p"<<pointer<<"_";
-					c = *iterator;
-					if(c == ']')ins++;
-					else if(c == '[')ins--;
-					//else if(c == '>')pointer--;
-					//else if(c == '<')pointer++;
+				if(fastLoops){
+					iterator = qNesting.front();
+					//std::cout<<"h";
+					qNesting.pop_front();
+					//std::cout<<"z";
 
-					if(c == '[' && ins == 0)
+				}else 
 					{
-						--iterator;
-						break;
-					}
+						do{
+							c = *iterator;
+							if(c == ']')ins++;
+							else if(c == '[')ins--;
 
-				}while(--iterator != str.begin());
+							if(c == '[' && ins == 0)
+							{
+								--iterator;
+								break;
+							}
+
+						}while(--iterator != str.begin());
+				}
 			}
 			default:
 			{}

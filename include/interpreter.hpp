@@ -9,6 +9,7 @@ class interpreter{
 		std::vector<std::string> params;
 		bool verbose;
 		bool silent;
+		bool fastLoops;
 
 		std::string fileToOpen;
 
